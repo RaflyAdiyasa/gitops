@@ -7,9 +7,9 @@ metadata:
 spec:
   project: course
   source:
-    repoURL: "https://github.com/cinemaxxi-team/devops_architecture.git"  # <- GANTI
+    repoURL: "https://github.com/rezanaipospos/gitops.git"  # <- GANTI
     targetRevision: HEAD
-    path: course-project/05-gitops/applications/development/backend-go
+    path: applications/development/backend-go
   destination:
     server: "https://kubernetes.default.svc"
     namespace: backend-development
