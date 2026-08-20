@@ -1,13 +1,13 @@
-# Common HPA — target Rollout (standalone pattern, no Deployment).
+# Common HPA — target Deployment
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: hpa
 spec:
   scaleTargetRef:
-    apiVersion: argoproj.io/v1alpha1
-    kind: Rollout
-    name: rollout
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dpl
   minReplicas: 1
   maxReplicas: 1
   metrics:

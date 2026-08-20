@@ -1,10 +1,7 @@
-# Common Rollout — standalone pod template (tidak butuh Deployment terpisah).
-# Pattern production-grade: Rollout mengcover seluruh lifecycle pod.
-# Env-specific override via patch/rollout.yaml per environment.
-apiVersion: argoproj.io/v1alpha1
-kind: Rollout
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: rollout
+  name: dpl
 spec:
   revisionHistoryLimit: 3
   selector:
@@ -80,18 +77,3 @@ spec:
           secret:
             secretName: backend-go-pem-secrets
             defaultMode: 256  # 0400 octal = 256 decimal
-  strategy:
-    canary:
-      canaryService: svc-canary
-      stableService: svc
-      trafficRouting:
-        plugins:
-          argoproj-labs/gatewayAPI:
-            httpRoute: route
-            namespace: ns
-      steps:
-      - setWeight: 20
-      - pause: {duration: 30s}
-      - setWeight: 50
-      - pause: {duration: 30s}
-      - setWeight: 100

@@ -1,7 +1,3 @@
-# HTTPRoute — expose backend-go-dev.naipospos.cloud via Gateway yang sama dengan ArgoCD
-# Gateway: course-gateway di namespace argocd (IP sama dengan argocd.naipospos.cloud)
-# Prereq: namespace backend-development harus punya label shared-gateway-access: "true"
-#   kubectl label namespace backend-development shared-gateway-access=true
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -10,9 +6,9 @@ spec:
   parentRefs:
     - name: course-gateway
       sectionName: https
-      namespace: argocd  # Gateway ada di namespace argocd
+      namespace: argocd
   hostnames:
-    - "backend-go-dev.naipospos.cloud"
+    - "localhost"
   rules:
     - matches:
         - path:
@@ -20,6 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: svc
-          port: 80
-        - name: canary
           port: 80

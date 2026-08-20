@@ -1,22 +1,11 @@
 # backend-go — development environment
-# Pattern: standalone Rollout (no Deployment), inherit dari common
-#
-# PENTING: Argo Rollouts validasi bahwa semua label di Service spec.selector
-# harus ada di Rollout spec.template.metadata.labels.
-# Oleh karena itu:
-# - Service selector HANYA menggunakan label `app` (tidak includeSelectors untuk env/service_name)
-# - Rollout selector.matchLabels dan pod template labels menggunakan label `app` yang sama
-# - Label informatif (environment, service_name, dll) hanya di metadata.labels (bukan selector)
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
 - ../../common
-- secrets.yaml
+- secret.yaml
 - network/http-route.yaml
-# New Relic canary analysis resources (Epic 7 — Observability)
-- canary/analysis-template-newrelic.yaml
-- canary/newrelic-secret.yaml
 
 namespace: backend-development
 
@@ -30,21 +19,16 @@ labels:
     service_name: backend-go
     app: backend-go
   includeTemplates: true
-  # includeSelectors: false (default) — JANGAN set includeSelectors: true
-  # agar Service selector dan Rollout selector tidak di-pollute label ekstra
 
 images:
 - name: dpl
   newName: asia-southeast1-docker.pkg.dev/PROJECT_ID/docker-images-repo/backend-go
   newTag: "latest"
-  # NOTE: image sebenarnya di-set di patch/rollout.yaml. CI update field image di sana.
 
 patches:
-- path: patch/rollout.yaml
-- path: canary/hpa.yaml
+- path: patch/deployment.yaml
 - path: patch/pdb.yaml
-# Override selector Rollout dan pod template labels agar pakai app: backend-go
-# (match dengan Service selector yang di-set via namePrefix + common/patch/service.yaml)
+# Override selector Deployment dan pod template labels agar pakai app: backend-go
 - patch: |
     - op: replace
       path: /spec/selector/matchLabels/app
@@ -56,9 +40,9 @@ patches:
       path: /spec/template/spec/affinity/podAntiAffinity/preferredDuringSchedulingIgnoredDuringExecution/0/podAffinityTerm/labelSelector/matchLabels/app
       value: backend-go
   target:
-    kind: Rollout
-    name: rollout
-# Override Service selector agar pakai app: backend-go (match Rollout)
+    kind: Deployment
+    name: dpl
+# Override Service selector agar pakai app: backend-go (match Deployment)
 - patch: |
     - op: replace
       path: /spec/selector/app
@@ -76,25 +60,12 @@ patches:
 # Replacements — auto-wire names via namePrefix
 replacements:
 - source:
-    kind: SecretStore
-    name: vault-backend
-    fieldPath: metadata.name
-  targets:
-  - select:
-      kind: ExternalSecret
-    fieldPaths:
-    - spec.secretStoreRef.name
-- source:
     kind: ServiceAccount
     name: backend-go
     fieldPath: metadata.name
   targets:
   - select:
-      kind: SecretStore
-    fieldPaths:
-    - spec.provider.vault.auth.kubernetes.serviceAccountRef.name
-  - select:
-      kind: Rollout
+      kind: Deployment
     fieldPaths:
     - spec.template.spec.serviceAccountName
 - source:
@@ -103,28 +74,11 @@ replacements:
     fieldPath: metadata.name
   targets:
   - select:
-      kind: Rollout
-    fieldPaths:
-    - spec.strategy.canary.stableService
-  - select:
       kind: HTTPRoute
     fieldPaths:
     - spec.rules.0.backendRefs.0.name
 - source:
-    kind: Service
-    name: svc-canary
-    fieldPath: metadata.name
-  targets:
-  - select:
-      kind: Rollout
-    fieldPaths:
-    - spec.strategy.canary.canaryService
-  - select:
-      kind: HTTPRoute
-    fieldPaths:
-    - spec.rules.0.backendRefs.1.name
-- source:
-    kind: Rollout
+    kind: Deployment
     fieldPath: metadata.name
   targets:
   - select:
@@ -140,18 +94,6 @@ replacements:
     fieldPath: metadata.name
   targets:
   - select:
-      kind: Rollout
-    fieldPaths:
-    - spec.strategy.canary.trafficRouting.plugins.argoproj-labs/gatewayAPI.httpRoute
-  - select:
       kind: SecurityPolicy
     fieldPaths:
     - spec.targetRefs.0.name
-- source:
-    kind: HTTPRoute
-    fieldPath: metadata.namespace
-  targets:
-  - select:
-      kind: Rollout
-    fieldPaths:
-    - spec.strategy.canary.trafficRouting.plugins.argoproj-labs/gatewayAPI.namespace
