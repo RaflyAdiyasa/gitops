@@ -85,15 +85,3 @@ replacements:
       kind: HorizontalPodAutoscaler
     fieldPaths:
     - spec.scaleTargetRef.name
-  - select:
-      kind: VerticalPodAutoscaler
-    fieldPaths:
-    - spec.targetRef.name
-- source:
-    kind: HTTPRoute
-    fieldPath: metadata.name
-  targets:
-  - select:
-      kind: SecurityPolicy
-    fieldPaths:
-    - spec.targetRefs.0.name

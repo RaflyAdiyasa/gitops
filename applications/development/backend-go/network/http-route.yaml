@@ -5,7 +5,7 @@ metadata:
 spec:
   parentRefs:
     - name: course-gateway
-      sectionName: https
+      sectionName: http
       namespace: argocd
   hostnames:
     - "localhost"

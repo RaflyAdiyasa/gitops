@@ -4,6 +4,5 @@ resources:
 - patch/hpa.yaml
 - patch/pdb.yaml
 - patch/service.yaml
-- patch/vpa.yaml
 - patch/security-policy.yaml
 - service-account.yaml
