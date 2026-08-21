@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: "https://github.com/rezanaipospos/gitops.git"  # <- GANTI
     targetRevision: HEAD
-    path: course-project/05-gitops/infrastructure
+    path: infrastructure
   destination:
     server: "https://kubernetes.default.svc"
     namespace: infrastructure

@@ -22,7 +22,7 @@ labels:
 
 images:
 - name: dpl
-  newName: asia-southeast1-docker.pkg.dev/PROJECT_ID/docker-images-repo/backend-go
+  newName: rezanaipospos/backend-go
   newTag: "latest"
 
 patches:
