@@ -20,11 +20,6 @@ labels:
     app: backend-go
   includeTemplates: true
 
-images:
-- name: dpl
-  newName: rezanaipospos/backend-go
-  newTag: "latest"
-
 patches:
 - path: patch/deployment.yaml
 - path: patch/pdb.yaml

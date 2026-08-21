@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: asia-southeast1-docker.pkg.dev/nsr-devops/docker-images-course/backend-go:5391c80
+        image: rezanaipospos/backend-go:latest
         resources:
           requests:
             cpu: 50m
