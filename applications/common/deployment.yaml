@@ -29,7 +29,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: app-port
-              containerPort: 8080
+              containerPort: 4000
           env:
             - name: APP_BANKING_PRIVATE_KEY_PATH
               value: "/app/keys/banking_private_key.pem"
