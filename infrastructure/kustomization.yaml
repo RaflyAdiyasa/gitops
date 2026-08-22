@@ -3,5 +3,4 @@ kind: Kustomization
 
 # Infrastructure platform services — di-manage ArgoCD via infrastructure Application.
 resources:
-  - progressive-delivery/install
   - gateway-api
