@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: huan/backend-go:10
+        image: huan/backend-go:11
         resources:
           requests:
             cpu: 50m
